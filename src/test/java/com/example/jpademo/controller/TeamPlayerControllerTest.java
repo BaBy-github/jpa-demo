@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -27,8 +29,8 @@ class TeamPlayerControllerTest {
 
     @BeforeEach
     void setUp(){
-        teamRepo.deleteAll();
         playerRepo.deleteAll();
+        teamRepo.deleteAll();
     }
 
     @Test
@@ -39,5 +41,18 @@ class TeamPlayerControllerTest {
         Team savedTeam = teamRepo.save(team);
         player.setTeam(savedTeam);
         Player savedPlayer = playerRepo.save(player);
+    }
+
+    @Test
+    void findTeamByPlayer(){
+        Team team = new Team();
+        Player player = new Player();
+
+        Team savedTeam = teamRepo.save(team);
+        player.setTeam(savedTeam);
+        Player savedPlayer = playerRepo.save(player);
+
+        Player foundPlayer = playerRepo.findById(savedPlayer.getId()).orElseThrow();
+        assertEquals(savedTeam.getId(), foundPlayer.getTeam().getId());
     }
 }
